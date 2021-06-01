@@ -1,0 +1,262 @@
+
+# 해시_완주하지 못한 선수
+import collections
+def solution(participant, completion):
+    answer = collections.Counter(participant) - collections.Counter(completion)
+    return list(answer.keys())[0]
+
+# 해시_전화번호 목록
+def solution(phone_book):
+    answer = True
+
+    phone_book.sort(key = lambda x : (len(x)))
+
+    for i in range(len(phone_book) - 1):
+        for j in range(i + 1, len(phone_book)):
+            if phone_book[i] == phone_book[j][0:len(phone_book[i])]:
+                return False
+
+    return answer
+
+# 해시_위장
+import pandas as pd
+def solution(clothes):
+    df = pd.DataFrame(clothes)
+    answer = 1
+    for x in df.groupby(1)[0].count():
+        answer *= (x+1)
+    return answer - 1
+
+# 해시_베스트앨범
+import pandas as pd
+def solution(genres, plays):
+    answer = []
+    df = pd.DataFrame({"genres":genres, "plays":plays})
+    df.sort_values(by = 'plays', ascending = False, inplace = True)
+    genres_index = df.groupby('genres')['plays'].sum().sort_values(ascending = False).index
+    for gi in genres_index:
+        answer += list(df.loc[df['genres'] == gi].index[:2])    
+    return answer
+
+
+# 스택/큐_주식가격
+def solution(prices):
+    answer = [] # 결과를 저장할 빈배열 생성
+    for i in range(0, len(prices)): # prices의 길이만큼 배열을 생성에 i에 담는다.
+        cnt = 0 # 카운트할 변수 초기화
+        for j in range(i + 1, len(prices)): # i + 1 번째부터 prices의 길이만큼 배열을 생성하고 j에 담는다.
+            if prices[i] <= prices[j]: # prices[j]가 prices[i]보다 크거나 같으면 가격이 떨어지지 않았으므로
+                cnt += 1 # cnt 1을 더해준다.
+            else: # 주식값이 떨어지는 초도 1초로 포함해야 하기 때문에 cnt+1해준다.
+                cnt += 1
+                break
+        answer.append(cnt) # prices[i]에 prices[j]비교를 모두 끝나면 answer에 cnt를 넣어준다.
+    return answer
+
+# 스택/큐_기능개발
+import math
+import pandas as pd
+def solution(progresses, speeds):
+    end_day = [math.ceil((100-p)/s) for p, s in zip(progresses, speeds)]
+    for i in range(1, len(end_day)):
+        if end_day[i-1] > end_day[i]:
+            end_day[i] = end_day[i-1]
+
+    answer = pd.Series(end_day).value_counts().sort_index().tolist()
+    return answer
+
+# 정렬_가장 큰 수
+import pandas as pd
+def solution(numbers):
+    return str(int(''.join(sorted(list(map(str, numbers)), key = lambda x:x*3, reverse = True))))
+
+# 정렬_H_Index
+import numpy as np
+def solution(citations):    
+    citations = np.array(citations)
+    answer = 0
+    
+    while sum(citations > answer) > answer:
+        answer += 1
+
+    return answer
+
+# 완전탐색_모의고사
+import numpy as np
+def solution(answers):
+    answers = np.array(answers)
+    
+    A1 = [1, 2, 3, 4, 5] * (int(len(answers) / 5) + 1)
+    A2 = [2, 1, 2, 3, 2, 4, 2, 5] * (int(len(answers) / 8) + 1)
+    A3 = [3, 3, 1, 1, 2, 2, 4, 4, 5, 5] * (int(len(answers) / 10) + 1)
+    
+    A1 = np.array(A1)
+    A2 = np.array(A2)
+    A3 = np.array(A3)
+    
+    print(A3)
+    S1 = sum(A1[:len(answers)] == answers)
+    S2 = sum(A2[:len(answers)] == answers)
+    S3 = sum(A3[:len(answers)] == answers)
+    
+    max_val = max(S1, S2, S3)
+    output = []
+    
+    if S1 == max_val:
+        output.append(1)
+    if S2 == max_val:
+        output.append(2)
+    if S3 == max_val:
+        output.append(3)
+        
+    return output
+
+# 탐욕법_구명보트
+def solution(people, limit):
+    answer = 0
+    people.sort()
+
+    f_cnt =0
+    e_cnt =len(people)-1
+    while e_cnt - f_cnt >=1:
+        if people[f_cnt] +people[e_cnt] <= limit:
+            f_cnt +=1
+            e_cnt -=1
+        else:
+            e_cnt -=1
+        answer +=1
+    if e_cnt == f_cnt:
+        answer +=1
+    return answer
+
+# 2019 카카오 개발자 겨울 인턴십_크레인 인형뽑기 게임
+def solution(board, moves):
+    n = len(board)
+    basket = []
+    answer = 0
+    for move in moves:
+        for i in range(n):
+            if board[i][move-1] != 0:
+                basket.append(board[i][move-1])            
+                if len(basket) >= 2 and basket[-1] == basket[-2]:
+                    basket = basket[:-2]
+                    answer += 2            
+                board[i][move-1] = 0
+                break
+    return answer
+
+
+# 월간 코드 챌린지 시즌1_두 개 뽑아서 더하기
+def solution(numbers):
+    #numbers.sort()
+    answer = []
+    for i in range(len(numbers)):
+        for j in range(i+1, len(numbers)):       
+            sum_ij = numbers[i] + numbers[j] 
+            if sum_ij not in answer:
+                answer.append(sum_ij)
+                
+    answer.sort()
+    return answer
+
+# 124 나라의 숫자
+def solution(n):
+    numbers = ['4', '1', '2']
+    answer = ''
+    while n:
+        answer = numbers[n % 3] + answer
+        n = n // 3 - (n % 3 == 0)
+    return answer
+
+# summer/winter coding_스킬트리
+def solution(skill, skill_trees):
+    answer = 0
+    for tree in skill_trees:
+        tree_s = ''.join([s for s in tree if s in skill])
+        if tree_s == skill[:len(tree_s)]:
+            answer += 1
+    
+    return answer
+
+# 2021 kakao blind recruitment_신규 아이디 추천
+import re
+p1 = re.compile('[0-9a-z-_.]')
+def solution(new_id):
+    new_id = new_id.lower()
+    new_id = ''.join(p1.findall(new_id))
+    while '.' * 2 in new_id:
+        new_id = new_id.replace('.'*2, '.')
+    if new_id != '':
+        if new_id[0] == '.':
+            new_id = new_id[1:]
+    if new_id != '':
+        if new_id[-1] == '.':
+            new_id = new_id[:-1]
+    if new_id == '':
+        new_id = 'a'
+    if len(new_id) >= 16:
+        new_id = new_id[:15]
+        if new_id[-1] == '.':
+            new_id = new_id[:-1]
+    while len(new_id) <= 2:
+        new_id += new_id[-1]
+    
+    return new_id
+
+# 연습문제_가운데 글자 가져오기
+def solution(s):
+    c = int(len(s) / 2)
+    if len(s) % 2 == 1:
+        return s[c]
+    else:
+        return s[c-1:c+1]
+
+# 연습문제_다음 큰 숫자
+def solution(n):
+    one_count = bin(n)[2:].count('1')
+    answer = n
+    
+    while True:
+        answer += 1
+        if bin(answer)[2:].count('1') == one_count:
+            break
+    
+    return answer
+
+# 연습문제_문자열 다루기 기본
+def solution(s):
+    answer = False
+    if len(s) == 4 or len(s) == 6:
+        if s.isdigit():
+            answer = True
+    return answer
+
+# 연습문제_수박수박수박수박수박수?
+def solution(n):
+    answer=  "수박" * (n//2)
+    if n % 2 == 1:
+        answer += '수'
+    return answer
+
+# 2018 kakao blind recruitment_[3차]파일명 정렬
+import pandas as pd
+def find_head(file_name):
+    head = ''
+    number = ''
+    for i, s in enumerate(file_name):
+        if not s.isdigit():
+            head += s.lower()
+        else:
+            break
+    for j, s in enumerate(file_name[i:]):
+        if s.isdigit():
+            number += s
+        else:
+            break
+    print(file_name, number)
+    return file_name, head, int(number)
+    
+def solution(files):
+    df = pd.DataFrame(map(find_head, files))
+    df.reset_index(inplace = True)
+    return df.sort_values(by = [1, 2, 'index']).loc[:, 0].tolist()
